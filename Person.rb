@@ -1,9 +1,13 @@
+require_relative './validations.rb'
+
 class Person
   attr_accessor :name, :age
+  include Validations
+
 
   def initialize(name, age)
+    @age = must_be_positive(age, 'age')
     @name = name
-    @age = age
   end
 
   def introduction

@@ -6,7 +6,6 @@ class Employee < Person
   include Validations
 
   def initialize(name, age, salary)
-    age = must_be_positive(age, 'age')
     super(name, age)
 
     @salary = must_be_positive(salary, 'salary')
