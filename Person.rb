@@ -5,6 +5,10 @@ class Person
     @name = name
     @age = age
   end
+
+  def introduction
+    puts "hola soy #{@name}"
+  end
 end
 
 #p1 = Person.new('paco', 32)
