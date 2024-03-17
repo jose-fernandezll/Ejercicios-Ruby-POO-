@@ -1,1 +1,3 @@
 this is the info about the project
+
+The objective of this project is to create a reservation system for a library. This system should allow users to search for books, make reservations, and administrators to manage books and reservations (the entire interface will be done in command line)
