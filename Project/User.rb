@@ -1,3 +1,4 @@
+require_relative 'modules\Autentication.rb'
 class User
   @@users = []
   def initialize(username, password, rol)
@@ -41,16 +42,23 @@ class User
 end
 
 
-User.new('pacoporros', 'pacoelporros','normal')
-puts "all users #{User.all_users} "
-puts ""
-
-user = {username: 'pacoporros', password: 'pacoelporros'}
-User.modify_user(user, 'paco-porros', 'paco-el-porros', 'admin')
-puts "all users but one modified #{User.all_users} "
-puts""
-
-user = {username: 'paco-porros', password: 'paco-el-porros'}
-User.remove_user(user)
-puts "#{User.all_users}"
+#User.new('pacoporros', 'pacoelporros','normal')
+#puts "all users #{User.all_users} "
+#puts ""
+#
+#user = {username: 'pacoporros', password: 'pacoelporros'}
+#User.modify_user(user, 'paco-porros', 'paco-el-porros', 'admin')
+#puts "all users but one modified #{User.all_users} "
+#puts""
+#
+#user = {username: 'paco-porros', password: 'paco-el-porros'}
+#User.remove_user(user)
+#puts "#{User.all_users}"
+#users = User.all_users
+#Autentication.login(users,'paco-porros','paco-el-porros')
+#
+#puts "this is the current user: #{Autentication.current_user}"
+#Autentication.logout
+#puts "this is the current user: #{Autentication.current_user}"
+#puts "is loged? #{Autentication.is_loged?}"
 

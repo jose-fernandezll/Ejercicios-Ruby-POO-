@@ -46,7 +46,7 @@ class Book
     puts 'done'
   end
 
-  def self.books
+  def self.all_books
     @@books
   end
 
@@ -62,12 +62,12 @@ end
 #Book.reserve_book(00001)
 #Book.modify_book(00001)
 #
-#puts Book.books
+#puts Book.all_books
 #Book.remove_book(00001)
 #Book.new('mordark', 'lex-lator', 2012, 'ocupado')
 #Book.new('madark', 'libluttor', 2013, 'ocupado')
 #
-#libros = Book.books
+#libros = Book.all_books
 #
 #puts "this is your books #{libros}"
 #
