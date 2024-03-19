@@ -2,6 +2,9 @@ class Book
   @@books = []
 
   def initialize(title, autor, year, state,isbn)
+    errors = validations(title, autor, year, state,isbn)
+    return puts "#{errors}" unless errors.empty?
+
     @book = {
       :title => title,
       :autor => autor,
@@ -28,6 +31,9 @@ class Book
   end
 
   def self.modify_book(title, autor, year, state,isbn)
+    errors = validations(title, autor, year, state,isbn)
+    return puts "#{errors}" unless errors.empty?
+
     index = find_index(isbn)
 
     @@books[index][:title] = title
@@ -55,9 +61,21 @@ class Book
     index = @@books.find_index { |hash| hash[:isbn] == isbn }
     index
    end
+
+   def validations(title, autor, year, state,isbn)
+      errors = []
+
+      errors << "title cant be null" if title.empty?
+      errors << "autor cant be null" if autor.empty?
+      errors << "publication year cant be null" if year.to_s.empty?
+      errors << "state cant be null" if state.empty?
+      errors << "isbn cant be null" if isbn.to_s.empty?
+
+      errors
+   end
 end
 
-#Book.new('more dark', 'leb-luttor', 2015, 'reservado',00001)
+Book.new('', '', 2015, 'reservado',00001)
 #
 #Book.reserve_book(00001)
 #Book.modify_book(00001)

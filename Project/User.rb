@@ -37,7 +37,7 @@ class User
 end
 
 
-User.new('jose','121415', 'admin')
-users = User.all_users
-
-Autentication.login(users,'jose', '121415')
+#User.new('jose','121415', 'admin')
+#users = User.all_users
+#
+#Autentication.login(users,'jose', '121415')
