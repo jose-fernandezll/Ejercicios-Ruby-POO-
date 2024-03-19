@@ -1,7 +1,8 @@
-require_relative 'modules\Roles.rb'
+require_relative 'modules\Autentication.rb'
 
 class User
   @@users = []
+  include Autentication
   include Roles
 
   def initialize(username, password, rol = 'normal')
@@ -16,7 +17,9 @@ class User
     @@users.append(@user)
   end
 
-  def self.modify_user(current_user, username, password)
+  def self.modify_user( username, password)
+    return puts 'you need to be loged' unless Autentication.is_loged?
+    current_user = Autentication.current_user
     return puts "username  or password cant be null" if username.empty? or password.empty?
 
     @@users[current_user[:index]][:username] = username
@@ -25,13 +28,15 @@ class User
     puts "user modified"
   end
 
-  def self.remove_user(current_user)
+  def self.remove_user
+    return puts 'you need to be loged' unless Autentication.is_loged?
+    current_user = Autentication.current_user
+
     @@users.delete_at(current_user[:index])
     puts "done"
   end
 
   def self.all_users
-    #validacion rol proximamente
     @@users
   end
 end
@@ -41,3 +46,5 @@ end
 #users = User.all_users
 #
 #Autentication.login(users,'jose', '121415')
+#User.modify_user('jose-ismael','121415')
+#puts User.all_users

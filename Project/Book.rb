@@ -1,5 +1,10 @@
+require_relative 'modules\Roles.rb'
+require_relative 'modules\Autentication.rb'
+
 class Book
   @@books = []
+  include Roles
+  include Autentication
 
   def initialize(title, autor, year, state,isbn)
     errors = validations(title, autor, year, state,isbn)
@@ -23,6 +28,8 @@ class Book
   end
 
   def self.reserve_book(isbn)
+    return puts 'you need to be loged' unless Autentication.is_loged?
+
     index = find_index(isbn)
     return puts 'this book is reserved for other person' if  @@books[index][:state].eql?('reservado')
 
@@ -31,6 +38,9 @@ class Book
   end
 
   def self.modify_book(title, autor, year, state,isbn)
+    return puts 'you need to be loged' unless Autentication.is_loged?
+    return puts 'you DONT have permissions' unless Roles.is_admin?
+
     errors = validations(title, autor, year, state,isbn)
     return puts "#{errors}" unless errors.empty?
 
@@ -46,6 +56,9 @@ class Book
   end
 
   def self.remove_book(isbn)
+    return puts 'you need to be loged' unless Autentication.is_loged?
+    return puts 'you DONT have permissions' unless Roles.is_admin?
+
     index = find_index(isbn)
 
     @@books.delete_at(index)
