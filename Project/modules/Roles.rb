@@ -4,6 +4,6 @@ module Roles
 
   def self.is_admin?
     user = Autentication.current_user
-    user[:rol] == "normal"
+    user[:rol] == "admin"
   end
 end
