@@ -2,7 +2,9 @@ module Autentication
   @@current_user = {}
   def self.login(users,username, password)
     user = find_user(users,username)
+
     @@current_user = user if user[:password] == password
+    @@current_user[:index] = find_index_user(users, username)
 
     return puts "logeado : #{@@current_user}"
   end
@@ -24,5 +26,10 @@ module Autentication
   def self.find_user(users,username)
     user = users.find { |user| user[:username] == username }
     user
+  end
+
+  def self.find_index_user(users, username)
+    index = @@users.find_index { |user| user[:username] == username }
+    index
   end
 end

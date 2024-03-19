@@ -1,10 +1,12 @@
-require_relative 'modules\Autentication.rb'
 require_relative 'modules\Roles.rb'
+
 class User
   @@users = []
   include Roles
 
-  def initialize(username, password, rol)
+  def initialize(username, password, rol = 'normal')
+    return puts "username  or password cant be null" if username.empty? or password.empty?
+
     @user = {
       :username => username,
       :password => password,
@@ -14,21 +16,17 @@ class User
     @@users.append(@user)
   end
 
-  def self.modify_user(current_user, username, password, rol)
-    index = find_user(current_user[:username])
+  def self.modify_user(current_user, username, password)
+    return puts "username  or password cant be null" if username.empty? or password.empty?
 
-    @@users[index][:username] = username
-    @@users[index][:password] = password
-    @@users[index][:rol] = rol
+    @@users[current_user[:index]][:username] = username
+    @@users[current_user[:index]][:password] = password
 
     puts "user modified"
   end
 
   def self.remove_user(current_user)
-    return puts "no tienes permiso" if Roles.is_admin?
-    index = find_user(current_user[:username])
-
-    @@users.delete_at(index)
+    @@users.delete_at(current_user[:index])
     puts "done"
   end
 
@@ -36,34 +34,4 @@ class User
     #validacion rol proximamente
     @@users
   end
-
-  private
-
-  def self.find_user(username)
-    index = @@users.find_index { |user| user[:username] == username }
-    index
-  end
 end
-
-
-#User.new('pacoporros', 'pacoelporros','normal')
-#puts "all users #{User.all_users} "
-#puts ""
-#
-#user = {username: 'pacoporros', password: 'pacoelporros'}
-#User.modify_user(user, 'paco-porros', 'paco-el-porros', 'normal')
-#puts "all users but one modified #{User.all_users} "
-##puts""
-#
-#users = User.all_users
-#Autentication.login(users,'paco-porros','paco-el-porros')
-#
-#puts "this is the current user: #{Autentication.current_user}"
-#
-#user = {username: 'paco-porros', password: 'paco-el-porros'}
-#User.remove_user(user)
-#puts "#{User.all_users}"
-#Autentication.logout
-#puts "this is the current user: #{Autentication.current_user}"
-#puts "is loged? #{Autentication.is_loged?}"
-
