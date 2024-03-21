@@ -5,7 +5,7 @@ module Autentication
 
     @@current_user = user if user[:password] == password
 
-    return puts "logeado : #{@@current_user}"
+    return "logeado : #{@@current_user}"
   end
 
   def self.logout

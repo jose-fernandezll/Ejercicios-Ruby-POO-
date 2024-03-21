@@ -25,7 +25,7 @@ class User
     @@users[current_user[:index]][:username] = username
     @@users[current_user[:index]][:password] = password
 
-    puts "user modified"
+    "user modified"
   end
 
   def self.remove_user
@@ -33,7 +33,7 @@ class User
     current_user = Autentication.current_user
 
     @@users.delete_at(current_user[:index])
-    puts "done"
+    "done"
   end
 
   def self.all_users
