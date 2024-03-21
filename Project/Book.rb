@@ -22,7 +22,7 @@ class Book
   end
 
   def self.search(text)
-    resultado = libros.select do |libro|
+    resultado = @@books.select do |libro|
       libro.any? { |clave, valor| valor.to_s.include?(text) }
     end
   end
@@ -37,20 +37,28 @@ class Book
     puts 'your books is reservate'
   end
 
-  def self.modify_book(title, autor, year, state,isbn)
+  def self.change_status_book(isbn, status)
+    return puts 'you need to be loged' unless Autentication.is_loged?
+
+    index = find_index(isbn)
+    @@books[index][:state]=status
+    puts "done"
+  end
+
+  def self.modify_book(title, autor, year, state,new_isbn, old_isbn)
     return puts 'you need to be loged' unless Autentication.is_loged?
     return puts 'you DONT have permissions' unless Roles.is_admin?
 
     errors = validations(title, autor, year, state,isbn)
     return puts "#{errors}" unless errors.empty?
 
-    index = find_index(isbn)
+    index = find_index(old_isbn)
 
     @@books[index][:title] = title
     @@books[index][:autor] = autor
     @@books[index][:publication_year] = year
     @@books[index][:state] = state
-    @@books[index][:isbn] = isbn
+    @@books[index][:isbn] = new_isbn
 
     puts 'libro modificado correctamente'
   end

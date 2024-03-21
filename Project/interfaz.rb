@@ -3,6 +3,46 @@ require_relative 'modules\Autentication.rb'
 require_relative 'User.rb'
 require_relative 'Book.rb'
 
+# metodos helpers
+
+def ver_libros
+  puts Book.all_books
+end
+
+def buscar_libros
+  puts "busqueda por titulo, autor y año ej:('habitos atomicos'): "
+  text = gets.chomp.to_s
+  libros = Book.search(text)
+
+  return puts 'not found' if libros.empty?
+
+  puts libros
+end
+
+def reservar_libros
+  puts "cuantos libros desea reservar: "
+  cantidad = gets.chomp.to_i
+
+  cantidad.times do |i|
+    puts "type isbn of the #{i} book:"
+    isbn = gets.chomp.to_i
+    Book.reserve_book(isbn)
+  end
+end
+
+def modificar_usuario
+  puts "type the new Username: "
+  username = gets.chomp
+  puts "type the new Password: "
+  password = gets.chomp.to_s
+
+  puts "type the old Password: "
+  old_password = gets.chomp.to_s
+
+  User.modify_user(username, password, old_password)
+end
+
+
 def menu(rol)
 
   case rol
@@ -14,6 +54,7 @@ def menu(rol)
       puts "- (2)Crear Usuario                                                   -"
       puts "- (3)Buscar libros                                                   -"
       puts "- (4)Ver Libros                                                      -"
+      puts "- (5)salir                                                           -"
       puts "-                                                                    -"
       puts "----------------------------------------------------------------------"
     when 'medium'
@@ -24,36 +65,176 @@ def menu(rol)
       puts "- (2)Buscar libros                                                   -"
       puts "- (3)Reservar Libros                                                 -"
       puts "- (4)Modificar Cuenta                                                -"
-      puts "- (4)Eliminar Cuenta                                                 -"
-      puts "- (4)Cerrar sesion                                                   -"
+      puts "- (5)Eliminar Cuenta                                                 -"
+      puts "- (6)Cerrar sesion                                                   -"
+      puts "- (7)salir                                                           -"
       puts "-                                                                    -"
       puts "----------------------------------------------------------------------"
     when 'advanced'
       puts "----------------------------------------------------------------------"
       puts "-                         RESERVATION SYSTEM                         -"
       puts "-                                                                    -"
-      puts "- (1)Ver Libros                                                      -"
-      puts "- (2)Buscar libros                                                   -"
-      puts "- (3)Agregar Libros                                                  -"
-      puts "- (4)Eliminar Libros                                                 -"
-      puts "- (5)Modificar Libros                                                -"
-      puts "- (6)Modificar Estado Libro                                          -"
-      puts "- (7)Ver Reservas                                                    -"
-      puts "- (8)Ver Usuarios                                                    -"
-      puts "- (9)Modificar Usuario                                               -"
-      puts "- (10)Eliminar Usuarios                                              -"
-      puts "- (11)Eliminar Cuenta                                                -"
-      puts "- (12)Cerrar sesion                                                  -"
+      puts "- (0)Ver Libros                                                      -"
+      puts "- (1)Buscar libros                                                   -"
+      puts "- (2)Agregar Libros                                                  -"
+      puts "- (3)Eliminar Libros                                                 -"
+      puts "- (4)Modificar Libros                                                -"
+      puts "- (5)Modificar Estado Libro                                          -"
+      puts "- (6)Ver Reservas                                                    -"
+      puts "- (7)Ver Usuarios                                                    -"
+      puts "- (8)Modificar Usuario                                               -"
+      puts "- (9)Eliminar Usuarios                                               -"
+      puts "- (10)Eliminar Cuenta                                                -"
+      puts "- (11)Cerrar sesion                                                  -"
+      puts "- (12)salir                                                          -"
       puts "-                                                                    -"
       puts "----------------------------------------------------------------------"
   end
 end
 
+#inicio de interfaz
 
 loop do
-  menu('basic') unless Autentication.is_loged?
-  menu('medium') unless Autentication.is_loged? and Roles.is_admin?
-  menu('advanced') if Autentication.is_loged? and Roles.is_admin?
-  Opcion = gets.chomp
+  unless Autentication.is_loged?
+    menu('basic')
+    opcion = gets.chomp.to_i
+    case opcion
+      when 1
+        puts "Username: "
+        username = gets.chomp
+        puts "Password: "
+        password = gets.chomp.to_s
+        puts Autentication.login(User.all_users, username, password)
+      when 2
+        puts "Type Username: "
+        username = gets.chomp
+        puts "Type Password: "
+        password = gets.chomp.to_s
+        puts User.new(username, password)
+      when 3
+        buscar_libros()
+      when 4
+        ver_libros()
+      when 5
+        break
+      when 777
+        puts "Type Username: "
+        username = gets.chomp
+        puts "Type Password: "
+        password = gets.chomp.to_s
+        puts User.new(username, password, 'admin')
+    end
+  end
+
+  if Autentication.is_loged? and !Roles.is_admin?
+    menu('medium')
+    opcion = gets.chomp.to_i
+
+    case opcion
+      when 1
+        ver_libros()
+      when 2
+        buscar_libros
+      when 3
+        reservar_libros()
+      when 4
+        modificar_usuario
+      when 5
+        User.remove_user
+      when 6
+        Autentication.logout
+      when 7
+        break
+    end
+  end
+
+  if Autentication.is_loged? and Roles.is_admin?
+    menu('advanced')
+    opcion = gets.chomp.to_i
+
+    case opcion
+      when 0
+        ver_libros
+      when 1
+        buscar_libros
+      when 2
+        puts "cuantos libros desea crear: "
+        cantidad = gets.chomp.to_i
+
+        cantidad.times do |i|
+          puts "type the title of the book #{i}"
+          title = gets.chomp
+          puts "type the autor of the book #{i}"
+          autor = gets.chomp
+          puts "type the publication year of the book #{i}"
+          year = gets.chomp.to_i
+          puts "type the state of the book #{i} only('disponible' or 'reservado')"
+          state = ''
+          loop do
+            puts "Por favor, ingresa 'disponible' o 'reservado':"
+            state = gets.chomp.downcase
+            break if ["disponible", "reservado"].include?(state)
+            puts "Entrada inválida. Intenta de nuevo."
+          end
+          puts "type the isbn of the book #{i}"
+          isbn = gets.chomp.to_s
+
+          Book.new(title, autor, year, state, isbn)
+        end
+      when 3
+        puts "how many books do you wanna delete: "
+        cantidad = gets.chomp.to_i
+
+        cantidad.times do |i|
+          puts "type the isbn of the #{i} book"
+          isbn = gets.chomp.to_i
+          Book.remove_book(isbn)
+        end
+      when 4
+        puts "type the isbn of the book #{i} that you want to update"
+        old_isbn = gets.chomp.to_s
+
+        puts "type the new isbn of the book(if u want to update the isbn, type the same if u dont) #{i}"
+        new_isbn = gets.chomp.to_s
+
+        puts "type the title of the book #{i}"
+        title = gets.chomp
+        puts "type the autor of the book #{i}"
+        autor = gets.chomp
+        puts "type the publication year of the book #{i}"
+        year = gets.chomp.to_i
+        puts "type the state of the book #{i} only('disponible' or 'reservado')"
+        loop do
+          puts "Por favor, ingresa 'disponible' o 'reservado':"
+          state = gets.chomp.downcase
+          break if ["disponible", "reservado"].include?(state)
+          puts "Entrada inválida. Intenta de nuevo."
+        end
+
+        Book.modify_book(title, autor, year, state, new_isbn, old_isbn)
+      when 5
+        puts "type the isbn: "
+        isbn = gets.chomp.to_s
+        puts "type the new status('disponible or reservado'): "
+        status = gets.chomp
+        Book.change_status_book(isbn, status)
+      when 6
+        Book.search('reserved')
+      when 7
+        User.all_users
+      when 8
+        modify_user
+      when 9
+        puts "type the username: "
+        username = gets.chomp
+        User.remove_user_admin(username)
+      when 10
+        User.remove_user
+      when 11
+        Autentication.logout
+      when 12
+        break
+    end
+  end
 
 end

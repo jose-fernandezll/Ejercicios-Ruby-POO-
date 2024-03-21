@@ -15,13 +15,15 @@ class User
     }
 
     @@users.append(@user)
+
+    'created user'
   end
 
-  def self.modify_user( username, password)
+  def self.modify_user( new_username, new_password, old_password)
     return puts 'you need to be loged' unless Autentication.is_loged?
+    return 'Incorrect password' if current_user[:password] != old_password
     current_user = Autentication.current_user
-    return puts "username  or password cant be null" if username.empty? or password.empty?
-
+    return puts "username  or password cant be null" if new_username.empty? or new_password.empty?
     @@users[current_user[:index]][:username] = username
     @@users[current_user[:index]][:password] = password
 
@@ -33,6 +35,18 @@ class User
     current_user = Autentication.current_user
 
     @@users.delete_at(current_user[:index])
+    "done"
+  end
+
+  def self.remove_user_admin(username)
+    user = {}
+    @@users.each_with_index do |user, index|
+      if user[:username] == username
+        user[:index] = index
+      end
+    end
+
+    @@users.delete_at(user[:index])
     "done"
   end
 
