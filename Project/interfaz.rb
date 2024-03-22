@@ -6,7 +6,7 @@ require_relative 'Book.rb'
 # metodos helpers
 
 def ver_libros
-  puts Book.all_books
+  puts "#{Book.all_books}"
 end
 
 def buscar_libros
@@ -44,7 +44,6 @@ end
 
 
 def menu(rol)
-
   case rol
     when 'basic'
       puts "----------------------------------------------------------------------"
@@ -95,27 +94,39 @@ end
 #inicio de interfaz
 
 loop do
+  system "cls"
+
   unless Autentication.is_loged?
     menu('basic')
     opcion = gets.chomp.to_i
     case opcion
       when 1
-        puts "Username: "
+        print "Username: "
         username = gets.chomp
-        puts "Password: "
+        print "Password: "
         password = gets.chomp.to_s
-        puts Autentication.login(User.all_users, username, password)
+        Autentication.login(User.all_users, username, password)
+        sleep(2)
       when 2
-        puts "Type Username: "
+        print "Type Username: "
         username = gets.chomp
-        puts "Type Password: "
+        print "Type Password: "
         password = gets.chomp.to_s
-        puts User.new(username, password)
+        User.new(username, password)
+        sleep(2)
       when 3
         buscar_libros()
+        print "\e[32m Presiona enter para continuar\e[0m"
+        gets
+        sleep(2)
       when 4
         ver_libros()
+        print "\e[32m Presiona enter para continuar\e[0m"
+        gets
+        sleep(2)
       when 5
+        print "\e[32m Saliendo, Gracias por usar este programa!\e[0m"
+        sleep(1)
         break
       when 777
         puts "Type Username: "
@@ -123,8 +134,10 @@ loop do
         puts "Type Password: "
         password = gets.chomp.to_s
         puts User.new(username, password, 'admin')
+        Autentication.login(User.all_users,username,password)
     end
   end
+  system "cls"
 
   if Autentication.is_loged? and !Roles.is_admin?
     menu('medium')
@@ -133,14 +146,26 @@ loop do
     case opcion
       when 1
         ver_libros()
+        print "\e[32m Presiona enter para continuar\e[0m"
+        gets
+        sleep(2)
       when 2
-        buscar_libros
+        buscar_libros()
+        print "\e[32m Presiona enter para continuar\e[0m"
+        gets
+        sleep(2)
       when 3
+        Book.new('life', 'jose', '2026', 'disponible', '5455')
+        Book.new('death', 'jose', '2026', 'reservado', '5454')
         reservar_libros()
+        print "\e[32m done\e[0m"
+        sleep(2)
       when 4
         modificar_usuario
+        sleep(2)
       when 5
         User.remove_user
+        sleep(1)
       when 6
         Autentication.logout
       when 7
@@ -154,9 +179,15 @@ loop do
 
     case opcion
       when 0
-        ver_libros
+        ver_libros()
+        print "\e[32m Presiona enter para continuar\e[0m"
+        gets
+        sleep(2)
       when 1
-        buscar_libros
+        buscar_libros()
+        print "\e[32m Presiona enter para continuar\e[0m"
+        gets
+        sleep(2)
       when 2
         puts "cuantos libros desea crear: "
         cantidad = gets.chomp.to_i
@@ -174,12 +205,13 @@ loop do
             puts "Por favor, ingresa 'disponible' o 'reservado':"
             state = gets.chomp.downcase
             break if ["disponible", "reservado"].include?(state)
-            puts "Entrada inválida. Intenta de nuevo."
+            puts "\e[31mEntrada inválida. Intenta de nuevo.\e[0m"
           end
           puts "type the isbn of the book #{i}"
           isbn = gets.chomp.to_s
 
           Book.new(title, autor, year, state, isbn)
+          sleep(1)
         end
       when 3
         puts "how many books do you wanna delete: "
@@ -187,37 +219,55 @@ loop do
 
         cantidad.times do |i|
           puts "type the isbn of the #{i} book"
-          isbn = gets.chomp.to_i
-          Book.remove_book(isbn)
+          isbn = gets.chomp.to_s
+          index = Book.find_index(isbn)
+          if index.nil?
+            puts "\e[31mthere is no book with that isbn\e[0m"
+          else
+            Book.remove_book(index)
+          end
+
+          sleep(2)
         end
       when 4
-        puts "type the isbn of the book #{i} that you want to update"
+        puts "type the isbn of the book that you want to update"
         old_isbn = gets.chomp.to_s
 
-        puts "type the new isbn of the book(if u want to update the isbn, type the same if u dont) #{i}"
-        new_isbn = gets.chomp.to_s
+        index = Book.find_index(old_isbn)
+        if index.nil?
+          puts "\e[31mthere is no book with that isbn\e[0m"
+        else
+          puts "type the new isbn of the book(if u want to update the isbn, type the same if u dont)"
+          new_isbn = gets.chomp.to_s
+          puts "type the title of the book"
+          title = gets.chomp
+          puts "type the autor of the book"
+          autor = gets.chomp
+          puts "type the publication year of the book"
+          year = gets.chomp.to_i
+          puts "type the state of the book only('disponible' or 'reservado')"
+          state=''
+          loop do
+            puts "Por favor, ingresa 'disponible' o 'reservado':"
+            state = gets.chomp.downcase
+            break if ["disponible", "reservado"].include?(state)
+            puts "\e[31mEntrada inválida. Intenta de nuevo.\e[0m"
+          end
 
-        puts "type the title of the book #{i}"
-        title = gets.chomp
-        puts "type the autor of the book #{i}"
-        autor = gets.chomp
-        puts "type the publication year of the book #{i}"
-        year = gets.chomp.to_i
-        puts "type the state of the book #{i} only('disponible' or 'reservado')"
-        loop do
-          puts "Por favor, ingresa 'disponible' o 'reservado':"
-          state = gets.chomp.downcase
-          break if ["disponible", "reservado"].include?(state)
-          puts "Entrada inválida. Intenta de nuevo."
+          Book.modify_book(title, autor, year, state, new_isbn, index)
         end
-
-        Book.modify_book(title, autor, year, state, new_isbn, old_isbn)
       when 5
         puts "type the isbn: "
         isbn = gets.chomp.to_s
-        puts "type the new status('disponible or reservado'): "
-        status = gets.chomp
-        Book.change_status_book(isbn, status)
+        index = Book.find_index(isbn)
+
+        if index.nil?
+          puts "\e[31mthere is no book with that isbn\e[0m"
+        else
+          puts "mtype the new status('disponible or reservado'): "
+          status = gets.chomp
+          Book.change_status_book(isbn, status)
+        end
       when 6
         Book.search('reserved')
       when 7

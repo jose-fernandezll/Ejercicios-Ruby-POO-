@@ -6,7 +6,7 @@ class User
   include Roles
 
   def initialize(username, password, rol = 'normal')
-    return puts "username  or password cant be null" if username.empty? or password.empty?
+    return puts "\e[31m ! username  or password cant be null !\e[0m" if username.empty? or password.empty?
 
     @user = {
       :username => username,
@@ -15,27 +15,33 @@ class User
     }
 
     @@users.append(@user)
-
-    'created user'
+    puts "\e[32mcreated user\e[0m"
   end
 
   def self.modify_user( new_username, new_password, old_password)
-    return puts 'you need to be loged' unless Autentication.is_loged?
-    return 'Incorrect password' if current_user[:password] != old_password
-    current_user = Autentication.current_user
-    return puts "username  or password cant be null" if new_username.empty? or new_password.empty?
-    @@users[current_user[:index]][:username] = username
-    @@users[current_user[:index]][:password] = password
+    return puts "\e[31m you need to be loged \e[0m" unless Autentication.is_loged?
 
-    "user modified"
+    current_user = Autentication.current_user
+
+    return puts "\e[31mIncorrect password\e[0m" unless current_user[:password] == old_password
+    return puts "\e[31musername  or password cant be null\e[0m" if new_username.empty? or new_password.empty?
+
+
+
+    @@users[current_user[:index]][:username] = new_username
+    @@users[current_user[:index]][:password] = new_password
+
+    puts "\e[32m'user modified'\e[0m"
   end
 
   def self.remove_user
-    return puts 'you need to be loged' unless Autentication.is_loged?
+    return puts "\e[31m you need to be loged \e[0m" unless Autentication.is_loged?
     current_user = Autentication.current_user
 
+    Autentication.logout
     @@users.delete_at(current_user[:index])
-    "done"
+    puts "\e[32m done!\e[0m"
+
   end
 
   def self.remove_user_admin(username)
@@ -47,7 +53,7 @@ class User
     end
 
     @@users.delete_at(user[:index])
-    "done"
+    puts "\e[32m'done!'\e[0m"
   end
 
   def self.all_users

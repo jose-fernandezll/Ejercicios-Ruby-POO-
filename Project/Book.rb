@@ -2,13 +2,33 @@ require_relative 'modules\Roles.rb'
 require_relative 'modules\Autentication.rb'
 
 class Book
-  @@books = []
+  @@books =
+  [
+    {
+      title: 'Cien años de soledad', autor: 'Gabriel García Márquez',
+      publication_year: '1967 ', state: 'disponible', isbn: '1001'
+    },
+    {
+      title: '1984', autor: 'George Orwell',
+      publication_year: '1949  ', state: 'disponible', isbn: '1002'
+    },
+    {
+      title: 'El gran Gatsby', autor: ' F. Scott Fitzgerald',
+      publication_year: '1925 ', state: 'disponible', isbn: '1003'
+    },
+    {
+      title: 'Matar a un ruiseñor', autor: 'Harper Lee',
+      publication_year: '1960 ', state: 'disponible', isbn: '1004'
+    }
+
+  ]
   include Roles
   include Autentication
 
   def initialize(title, autor, year, state,isbn)
     errors = validations(title, autor, year, state,isbn)
-    return puts "#{errors}" unless errors.empty?
+
+    return puts "\e[31m errors: #{errors}\e[0m" unless errors.empty?
 
     @book = {
       :title => title,
@@ -19,6 +39,7 @@ class Book
     }
 
     @@books.append(@book)
+    puts "\e[32m successfully created book\e[0m"
   end
 
   def self.search(text)
@@ -28,31 +49,36 @@ class Book
   end
 
   def self.reserve_book(isbn)
-    return puts 'you need to be loged' unless Autentication.is_loged?
+    return puts "\e[31m you need to be loged! \e[0m" unless Autentication.is_loged?
 
     index = find_index(isbn)
-    return puts 'this book is reserved for other person' if  @@books[index][:state].eql?('reservado')
+
+    return puts "\e[31mthere is no book with that isbn\e[0m" if index.nil?
+    return puts "\e[31this book is reserved for other person\e[0m" if  @@books[index][:state].eql?('reservado')
 
     @@books[index][:state] = 'reservado'
-    puts 'your books is reservate'
+    puts "\e[31myour books is reservate\e[0m"
   end
 
   def self.change_status_book(isbn, status)
-    return puts 'you need to be loged' unless Autentication.is_loged?
+    return puts "\e[31m you need to be loged! \e[0m" unless Autentication.is_loged?
 
     index = find_index(isbn)
+    return puts "\e[31mthere is no book with that isbn\e[0m" if index.nil?
+
     @@books[index][:state]=status
-    puts "done"
+    puts "\e[32mdone\e[0m"
   end
 
-  def self.modify_book(title, autor, year, state,new_isbn, old_isbn)
-    return puts 'you need to be loged' unless Autentication.is_loged?
-    return puts 'you DONT have permissions' unless Roles.is_admin?
+  def self.modify_book(title, autor, year, state,new_isbn, index)
+    binding.irb
+    return puts "\e[31m you need to be loged! \e[0m" unless Autentication.is_loged?
 
-    errors = validations(title, autor, year, state,isbn)
-    return puts "#{errors}" unless errors.empty?
+    return puts "\e[31!you DONT have permissions!\e[0m" unless Roles.is_admin?
 
-    index = find_index(old_isbn)
+    errors = validations(title, autor, year, state,new_isbn)
+    return puts "\e[31m errors: #{errors}\e[0m" unless errors.empty?
+
 
     @@books[index][:title] = title
     @@books[index][:autor] = autor
@@ -60,38 +86,33 @@ class Book
     @@books[index][:state] = state
     @@books[index][:isbn] = new_isbn
 
-    puts 'libro modificado correctamente'
+    puts "\e[32mlibro modificado correctamente\e[0m"
   end
 
-  def self.remove_book(isbn)
-    return puts 'you need to be loged' unless Autentication.is_loged?
-    return puts 'you DONT have permissions' unless Roles.is_admin?
-
-    index = find_index(isbn)
+  def self.remove_book(index)
+    return puts "\e[31m you need to be loged \e[0m" unless Autentication.is_loged?
+    return puts "\e[31myou DONT have permissions\e[0m" unless Roles.is_admin?
 
     @@books.delete_at(index)
-    puts 'done'
+    puts "\e[32m done \e[0m"
   end
 
   def self.all_books
     @@books
   end
 
-  private
-   def self.find_index(isbn)
+  def self.find_index(isbn)
     index = @@books.find_index { |hash| hash[:isbn] == isbn }
     index
-   end
-
-   def validations(title, autor, year, state,isbn)
-      errors = []
-
-      errors << "title cant be null" if title.empty?
-      errors << "autor cant be null" if autor.empty?
-      errors << "publication year cant be null" if year.to_s.empty?
-      errors << "state cant be null" if state.empty?
-      errors << "isbn cant be null" if isbn.to_s.empty?
-
-      errors
-   end
+  end
+  private
+  def validations(title, autor, year, state,isbn)
+    errors = []
+    errors << "title cant be null" if title.empty?
+    errors << "autor cant be null" if autor.empty?
+    errors << "publication year cant be null" if year.to_s.empty?
+    errors << "state cant be null" if state.empty?
+    errors << "isbn cant be null" if isbn.to_s.empty?
+    errors
+  end
 end

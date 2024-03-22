@@ -2,11 +2,12 @@ module Autentication
   @@current_user = {}
   def self.login(users,username, password)
     user = find_user(users,username)
-    return 'no account exists with that username' if user.empty?
+    return puts "\e[31m ! no account exists with that username ! \e[0m" if user.empty?
 
     @@current_user = user if user[:password] == password
 
-    return "successful login!"
+    return puts "\e[31m'username or password wrong!'\e[0m" if !is_loged?
+    return puts "\e[32m'successful login!'\e[0m" if is_loged?
   end
 
   def self.logout
