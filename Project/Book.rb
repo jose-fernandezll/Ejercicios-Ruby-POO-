@@ -60,33 +60,33 @@ class Book
     puts "\e[31myour books is reservate\e[0m"
   end
 
-  def self.change_status_book(isbn, status)
+  def self.change_status_book(index)
     return puts "\e[31m you need to be loged! \e[0m" unless Autentication.is_loged?
-
-    index = find_index(isbn)
-    return puts "\e[31mthere is no book with that isbn\e[0m" if index.nil?
-
-    @@books[index][:state]=status
-    puts "\e[32mdone\e[0m"
+    if @@books[index][:state] == 'reservado'
+      @@books[index][:state] = "disponible"
+    else
+      @@books[index][:state] = "reservado"
+    end
+    puts "\e[32m done \e[0m"
   end
 
-  def self.modify_book(title, autor, year, state,new_isbn, index)
+  def self.modify_book(args, index)
     binding.irb
     return puts "\e[31m you need to be loged! \e[0m" unless Autentication.is_loged?
 
     return puts "\e[31!you DONT have permissions!\e[0m" unless Roles.is_admin?
 
-    errors = validations(title, autor, year, state,new_isbn)
-    return puts "\e[31m errors: #{errors}\e[0m" unless errors.empty?
+    #errors = validations(args[:title], args[:autor], args[:year], args[:state],args[:new_isbn])
+    #return puts "\e[31m errors: #{errors}\e[0m" unless errors.empty?
 
 
-    @@books[index][:title] = title
-    @@books[index][:autor] = autor
-    @@books[index][:publication_year] = year
-    @@books[index][:state] = state
-    @@books[index][:isbn] = new_isbn
+    @@books[index][:title] = args[:title]unless args[:title].empty?
+    @@books[index][:autor] = args[:autor] unless args[:autor].empty?
+    @@books[index][:publication_year] = args[:publication_year].to_i unless args[:publication_year].empty?
+    @@books[index][:state] = args[:state]
+    @@books[index][:isbn] = args[:new_isbn] unless args[:new_isbn].empty?
 
-    puts "\e[32mlibro modificado correctamente\e[0m"
+    puts "\e[32m libro modificado correctamente\e[0m"
   end
 
   def self.remove_book(index)
@@ -106,7 +106,7 @@ class Book
     index
   end
   private
-  def validations(title, autor, year, state,isbn)
+  def self.validations(title, autor, year, state,isbn)
     errors = []
     errors << "title cant be null" if title.empty?
     errors << "autor cant be null" if autor.empty?

@@ -6,7 +6,7 @@ require_relative 'Book.rb'
 # metodos helpers
 
 def ver_libros
-  puts "#{Book.all_books}"
+  puts Book.all_books
 end
 
 def buscar_libros
@@ -213,6 +213,7 @@ loop do
           Book.new(title, autor, year, state, isbn)
           sleep(1)
         end
+        sleep(1)
       when 3
         puts "how many books do you wanna delete: "
         cantidad = gets.chomp.to_i
@@ -225,26 +226,29 @@ loop do
             puts "\e[31mthere is no book with that isbn\e[0m"
           else
             Book.remove_book(index)
+            sleep(2)
           end
 
-          sleep(2)
         end
+        sleep(1)
       when 4
+        args= {}
         puts "type the isbn of the book that you want to update"
         old_isbn = gets.chomp.to_s
+        puts "\e[32m if u dont want to update some data just enter to skip!\e[0m"
 
         index = Book.find_index(old_isbn)
         if index.nil?
           puts "\e[31mthere is no book with that isbn\e[0m"
         else
-          puts "type the new isbn of the book(if u want to update the isbn, type the same if u dont)"
-          new_isbn = gets.chomp.to_s
+          puts "type the new isbn of the book"
+          args[:new_isbn] = gets.chomp.to_s
           puts "type the title of the book"
-          title = gets.chomp
+          args[:title] = gets.chomp
           puts "type the autor of the book"
-          autor = gets.chomp
+          args[:autor] = gets.chomp
           puts "type the publication year of the book"
-          year = gets.chomp.to_i
+          args[:publication_year] = gets.chomp.to_s
           puts "type the state of the book only('disponible' or 'reservado')"
           state=''
           loop do
@@ -253,8 +257,10 @@ loop do
             break if ["disponible", "reservado"].include?(state)
             puts "\e[31mEntrada inválida. Intenta de nuevo.\e[0m"
           end
+          args[:state] = state
 
-          Book.modify_book(title, autor, year, state, new_isbn, index)
+          Book.modify_book(args,index)
+          sleep(2)
         end
       when 5
         puts "type the isbn: "
@@ -263,15 +269,23 @@ loop do
 
         if index.nil?
           puts "\e[31mthere is no book with that isbn\e[0m"
+          sleep(2)
         else
-          puts "mtype the new status('disponible or reservado'): "
-          status = gets.chomp
-          Book.change_status_book(isbn, status)
+          Book.change_status_book(index)
+          sleep(2)
         end
       when 6
-        Book.search('reserved')
+        puts Book.search('reservado')
+        print "\e[32m Presiona enter para continuar\e[0m"
+        gets
+
+        sleep(2)
       when 7
-        User.all_users
+        puts User.all_users
+        print "\e[32m Presiona enter para continuar\e[0m"
+        gets
+
+        sleep(2)
       when 8
         modify_user
       when 9
