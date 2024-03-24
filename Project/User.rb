@@ -38,21 +38,22 @@ class User
     return puts "\e[31m you need to be loged \e[0m" unless Autentication.is_loged?
     current_user = Autentication.current_user
 
-    Autentication.logout
     @@users.delete_at(current_user[:index])
+    Autentication.logout
     puts "\e[32m done!\e[0m"
 
   end
 
   def self.remove_user_admin(username)
-    user = {}
+    user_found = {}
     @@users.each_with_index do |user, index|
       if user[:username] == username
-        user[:index] = index
+        user_found[:index] = index
       end
     end
-
-    @@users.delete_at(user[:index])
+    return puts "\e[31m User not found \e[0m" unless user_found.has_key?(:index)
+    binding.irb
+    @@users.delete_at(user_found[:index])
     puts "\e[32m'done!'\e[0m"
   end
 

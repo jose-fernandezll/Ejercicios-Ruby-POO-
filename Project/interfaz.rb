@@ -287,13 +287,16 @@ loop do
 
         sleep(2)
       when 8
-        modify_user
+        modificar_usuario
+        sleep(1)
       when 9
         puts "type the username: "
         username = gets.chomp
         User.remove_user_admin(username)
+        sleep(1)
       when 10
         User.remove_user
+        sleep(1)
       when 11
         Autentication.logout
       when 12
