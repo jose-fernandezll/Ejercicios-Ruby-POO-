@@ -3,7 +3,7 @@ module Autentication
   def self.login(users,username, password)
     user = find_user(users,username)
     return puts "\e[31m ! no account exists with that username ! \e[0m" if user.empty?
-
+    binding.irb
     @@current_user = user if user[:password] == password
 
     return puts "\e[31m'username or password wrong!'\e[0m" if !is_loged?
@@ -25,6 +25,7 @@ module Autentication
   private
 
   def self.find_user(users,username)
+    binding.irb
     users.each_with_index do |user, index|
       if user[:username] == username
         user[:index] = index

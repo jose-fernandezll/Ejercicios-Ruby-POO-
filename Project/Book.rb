@@ -1,27 +1,9 @@
 require_relative 'modules\Roles.rb'
 require_relative 'modules\Autentication.rb'
+require 'json'
 
 class Book
-  @@books =
-  [
-    {
-      title: 'Cien años de soledad', autor: 'Gabriel García Márquez',
-      publication_year: '1967 ', state: 'disponible', isbn: '1001'
-    },
-    {
-      title: '1984', autor: 'George Orwell',
-      publication_year: '1949  ', state: 'disponible', isbn: '1002'
-    },
-    {
-      title: 'El gran Gatsby', autor: ' F. Scott Fitzgerald',
-      publication_year: '1925 ', state: 'disponible', isbn: '1003'
-    },
-    {
-      title: 'Matar a un ruiseñor', autor: 'Harper Lee',
-      publication_year: '1960 ', state: 'disponible', isbn: '1004'
-    }
-
-  ]
+  @@books =[]
   include Roles
   include Autentication
 
@@ -39,6 +21,7 @@ class Book
     }
 
     @@books.append(@book)
+
     puts "\e[32m successfully created book\e[0m"
   end
 
@@ -71,7 +54,6 @@ class Book
   end
 
   def self.modify_book(args, index)
-    binding.irb
     return puts "\e[31m you need to be loged! \e[0m" unless Autentication.is_loged?
 
     return puts "\e[31!you DONT have permissions!\e[0m" unless Roles.is_admin?
@@ -101,12 +83,17 @@ class Book
     @@books
   end
 
+  def self.all_books_new(books)
+    @@books = books unless books.empty?
+  end
+
   def self.find_index(isbn)
     index = @@books.find_index { |hash| hash[:isbn] == isbn }
     index
   end
+
   private
-  def self.validations(title, autor, year, state,isbn)
+  def validations(title, autor, year, state,isbn)
     errors = []
     errors << "title cant be null" if title.empty?
     errors << "autor cant be null" if autor.empty?

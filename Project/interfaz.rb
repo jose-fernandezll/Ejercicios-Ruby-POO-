@@ -2,6 +2,8 @@ require_relative 'modules\Roles.rb'
 require_relative 'modules\Autentication.rb'
 require_relative 'User.rb'
 require_relative 'Book.rb'
+require 'json'
+
 
 # metodos helpers
 
@@ -18,7 +20,19 @@ def buscar_libros
 
   puts libros
 end
-
+def guardar_libros
+  File.open("Ejercicios-Ruby-POO/project/data_books.json","w") do |f|
+    #binding.irb
+    libros = Book.all_books
+    f.write(libros.to_json)
+  end
+end
+def guardar_Usuarios
+  File.open("Ejercicios-Ruby-POO/project/data_users.json","w") do |f|
+    usuarios = User.all_users
+    f.write(usuarios.to_json)
+  end
+end
 def reservar_libros
   puts "cuantos libros desea reservar: "
   cantidad = gets.chomp.to_i
@@ -41,7 +55,32 @@ def modificar_usuario
 
   User.modify_user(username, password, old_password)
 end
+def convertir_tosymbol(data)
+  datos_simbolos = data.map do |hash|
+    hash.transform_keys(&:to_sym)
+  end
+end
 
+def cargar_datos_libros()
+  data =[]
+  File.open("Ejercicios-Ruby-POO/Project/data_books.json","r") do |f|
+    data = JSON.parse(f.read)
+  end
+  datos_simbolos = convertir_tosymbol(data)
+
+  Book.all_books_new(datos_simbolos)
+end
+
+def cargar_datos_users()
+  data =[]
+  File.open("Ejercicios-Ruby-POO/Project/data_users.json","r") do |f|
+    users= f.read
+    data = JSON.parse(users)
+  end
+  users = convertir_tosymbol(data)
+  User.all_users_new(users)
+
+end
 
 def menu(rol)
   case rol
@@ -95,7 +134,8 @@ end
 
 loop do
   system "cls"
-
+  cargar_datos_libros()
+  cargar_datos_users()
   unless Autentication.is_loged?
     menu('basic')
     opcion = gets.chomp.to_i
@@ -113,6 +153,7 @@ loop do
         print "Type Password: "
         password = gets.chomp.to_s
         User.new(username, password)
+        guardar_Usuarios()
         sleep(2)
       when 3
         buscar_libros()
@@ -134,7 +175,9 @@ loop do
         puts "Type Password: "
         password = gets.chomp.to_s
         puts User.new(username, password, 'admin')
+        guardar_Usuarios()
         Autentication.login(User.all_users,username,password)
+
     end
   end
   system "cls"
@@ -155,16 +198,18 @@ loop do
         gets
         sleep(2)
       when 3
-        Book.new('life', 'jose', '2026', 'disponible', '5455')
-        Book.new('death', 'jose', '2026', 'reservado', '5454')
+
         reservar_libros()
+        guardar_libros()
         print "\e[32m done\e[0m"
         sleep(2)
       when 4
         modificar_usuario
+        guardar_Usuarios()
         sleep(2)
       when 5
         User.remove_user
+        guardar_Usuarios()
         sleep(1)
       when 6
         Autentication.logout
@@ -213,6 +258,7 @@ loop do
           Book.new(title, autor, year, state, isbn)
           sleep(1)
         end
+        guardar_libros()
         sleep(1)
       when 3
         puts "how many books do you wanna delete: "
@@ -230,6 +276,8 @@ loop do
           end
 
         end
+        guardar_libros()
+
         sleep(1)
       when 4
         args= {}
@@ -260,6 +308,7 @@ loop do
           args[:state] = state
 
           Book.modify_book(args,index)
+          guardar_libros()
           sleep(2)
         end
       when 5
@@ -272,6 +321,7 @@ loop do
           sleep(2)
         else
           Book.change_status_book(index)
+          guardar_libros()
           sleep(2)
         end
       when 6
@@ -288,14 +338,20 @@ loop do
         sleep(2)
       when 8
         modificar_usuario
+        guardar_Usuarios()
+
         sleep(1)
       when 9
         puts "type the username: "
         username = gets.chomp
         User.remove_user_admin(username)
+        guardar_Usuarios()
+
         sleep(1)
       when 10
         User.remove_user
+        guardar_Usuarios()
+
         sleep(1)
       when 11
         Autentication.logout

@@ -1,4 +1,5 @@
 require_relative 'modules\Autentication.rb'
+require 'json'
 
 class User
   @@users = []
@@ -15,6 +16,7 @@ class User
     }
 
     @@users.append(@user)
+
     puts "\e[32mcreated user\e[0m"
   end
 
@@ -52,13 +54,17 @@ class User
       end
     end
     return puts "\e[31m User not found \e[0m" unless user_found.has_key?(:index)
-    binding.irb
+
     @@users.delete_at(user_found[:index])
     puts "\e[32m'done!'\e[0m"
   end
 
   def self.all_users
     @@users
+  end
+
+  def self.all_users_new(users)
+    @@users = users unless users.empty?
   end
 end
 
