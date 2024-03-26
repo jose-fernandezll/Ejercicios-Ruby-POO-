@@ -1,18 +1,1 @@
-[
-  {
-    "title": "Cien años de soledad", "autor": "Gabriel García Márquez",
-    "publication_year": "1967 ", "state": "disponible", "isbn": "1001"
-  },
-  {
-    "title": "1984", "autor": "George Orwell",
-    "publication_year": "1949  ", "state": "disponible", "isbn": "1002"
-  },
-  {
-    "title": "El gran Gatsby", "autor": " F. Scott Fitzgerald",
-    "publication_year": "1925 ", "state": "disponible", "isbn": "1003"
-  },
-  {
-    "title": "Matar a un ruiseñor", "autor": "Harper Lee",
-    "publication_year": "1960 ", "state": "disponible", "isbn": "1004"
-  }
-]
+[{"title":"Cien años de Tristeza","autor":"Gabriel García Márquez","publication_year":"1967 ","state":"disponible","isbn":"1001"},{"title":"1984","autor":"George Orwell","publication_year":"1949  ","state":"disponible","isbn":"1002"},{"title":"Matar a un ruiseñor","autor":"Harper Lee","publication_year":"1960 ","state":"disponible","isbn":"1004"},{"title":"jumanjiii","autor":"dontknwo","publication_year":2023,"state":"disponible","isbn":"5585"}]

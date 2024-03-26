@@ -8,7 +8,18 @@ require 'json'
 # metodos helpers
 
 def ver_libros
-  puts Book.all_books
+  libros = Book.all_books
+  longest_key = libros.first.keys.max_by(&:length).length
+  longest_value = libros.flat_map(&:values).max_by(&:length).length
+
+  libros.each do |libro|
+    puts "-" * (longest_key + longest_value + 7)
+    libro.each do |key, value|
+      puts "| #{key.to_s.ljust(longest_key)}: #{value.rjust(longest_value)} |"
+    end
+    puts "-" * (longest_key + longest_value + 7)
+  end
+
 end
 
 def buscar_libros
@@ -64,7 +75,8 @@ end
 def cargar_datos_libros()
   data =[]
   File.open("Ejercicios-Ruby-POO/Project/data_books.json","r") do |f|
-    data = JSON.parse(f.read)
+    libros = f.read
+    data = JSON.parse(libros) unless libros.empty?
   end
   datos_simbolos = convertir_tosymbol(data)
 
@@ -74,8 +86,8 @@ end
 def cargar_datos_users()
   data =[]
   File.open("Ejercicios-Ruby-POO/Project/data_users.json","r") do |f|
-    users= f.read
-    data = JSON.parse(users)
+    users = f.read
+    data = JSON.parse(users) unless users.empty?
   end
   users = convertir_tosymbol(data)
   User.all_users_new(users)
@@ -152,9 +164,15 @@ loop do
         username = gets.chomp
         print "Type Password: "
         password = gets.chomp.to_s
-        User.new(username, password)
-        guardar_Usuarios()
-        sleep(2)
+        user = Autentication.find_user(User.all_users,username)
+        unless user.empty?
+          puts "\e[31m that username exist\e[0m"
+          sleep(2)
+        else
+          User.new(username, password)
+          guardar_Usuarios()
+          sleep(2)
+          end
       when 3
         buscar_libros()
         print "\e[32m Presiona enter para continuar\e[0m"
@@ -174,9 +192,16 @@ loop do
         username = gets.chomp
         puts "Type Password: "
         password = gets.chomp.to_s
-        puts User.new(username, password, 'admin')
-        guardar_Usuarios()
-        Autentication.login(User.all_users,username,password)
+        user = Autentication.find_user(User.all_users,username)
+
+        unless user.empty?
+          puts "\e[31m that username exist\e[0m"
+          sleep(2)
+        else
+          puts User.new(username, password, 'admin')
+          guardar_Usuarios()
+          sleep(2)
+        end
 
     end
   end
