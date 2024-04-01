@@ -1,4 +1,4 @@
-require_relative 'modules\Autentication.rb'
+require_relative 'modules\module_autentication'
 require 'json'
 
 class User

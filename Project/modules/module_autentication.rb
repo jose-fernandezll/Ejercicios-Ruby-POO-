@@ -1,4 +1,7 @@
+require_relative './module_custom_exceptions'
+
 module Autentication
+  include CustomExceptions
   @@current_user = {}
   def self.login(users,username, password)
     user = find_user(users,username)
@@ -15,6 +18,10 @@ module Autentication
 
   def self.is_loged?
     @@current_user.has_key?(:username)
+  end
+
+  def self.check_logged_in
+    raise CustomExceptions::NotLoggedInError, "\e[31m you need to be loged! \e[0m" unless Autentication.is_loged?
   end
 
   def self.current_user
