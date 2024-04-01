@@ -2,7 +2,7 @@
 
 require_relative 'modules/module_autentication'
 require_relative 'modules/module_roles'
-#require_relative './class_user'
+# require_relative './class_user'
 require 'json'
 
 # class Book

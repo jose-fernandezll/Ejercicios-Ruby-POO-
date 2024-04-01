@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 require_relative 'module_autentication'
 require_relative 'module_custom_exceptions'
 
+# Module Roles
 module Roles
   include Autentication
   include CustomExceptions
