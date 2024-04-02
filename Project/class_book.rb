@@ -11,7 +11,7 @@ class Book
   include Roles
   include Autentication
 
-  def initialize(title, autor, year, state,isbn)
+  def initialize(title, autor, year, state, isbn)
     begin
       errors = validations(title, autor, year, state, isbn)
       raise CustomExceptions::RequireValues, "\e[31m errors:#{errors}! \e[0m" unless errors.empty?
@@ -39,11 +39,11 @@ class Book
 
     index = find_index(isbn)
 
-    return puts "\e[31mthere is no book with that isbn\e[0m" if index.nil?
-    return puts "\e[31this book is reserved for other person\e[0m" if @@books[index][:state].eql?('reservado')
+    return puts "\e[31m there is no book with that isbn\e[0m" if index.nil?
+    return puts "\e[31m this book is reserved for other person\e[0m" if @@books[index][:state].eql?('reservado')
 
     @@books[index][:state] = 'reservado'
-    puts "\e[31myour books is reservate\e[0m"
+    puts "\e[32myour books is reservate\e[0m"
   end
 
   def self.change_status_book(index)
@@ -71,13 +71,9 @@ class Book
     puts "\e[32m libro modificado correctamente\e[0m"
   end
 
-  def update_book(args, index)
+  def self.update_book(args, index)
     @@books[index].each_key do |key|
-      if key == :publication_year
-        @@books[index][key] = args[key].to_i unless args[key].nil?
-      else
-        @@books[index][key] = args[key] unless args[key].empty?
-      end
+      @@books[index][key] = args[key] unless args[key].empty?
     end
   end
 

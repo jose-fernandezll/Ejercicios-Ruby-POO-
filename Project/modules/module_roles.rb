@@ -9,7 +9,7 @@ module Roles
   include CustomExceptions
 
   def self.admin?
-    user = Autentication.current_user
+    user = Autentication.current_user[:user]
     user[:rol] == 'admin'
   end
 

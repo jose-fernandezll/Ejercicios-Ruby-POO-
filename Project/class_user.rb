@@ -17,29 +17,34 @@ class User
     puts "\e[32mcreated user\e[0m"
   end
 
-  def self.modify_user(new_username, new_password, old_password)
+  def self.update_user(index, new_password, new_username, new_rol)
+    @@users[index][:username] = new_username
+    @@users[index][:password] = new_password
+    @@users[index][:rol] = new_rol
+  end
+
+  def self.modify_user(new_username, new_password, old_password, new_rol = 'normal')
     begin
       Autentication.check_logged_in
     rescue CustomExceptions::NotLoggedInError, CustomExceptions::NotAdminError => e
       return puts e.message
     end
 
-    return puts "\e[31mIncorrect password\e[0m" unless Autentication.current_user[:password] == old_password
+    return puts "\e[31mIncorrect password\e[0m" unless Autentication.current_user[:user][:password] == old_password
 
     return puts "\e[31musername  or password cant be null\e[0m" if new_username.empty? || new_password.empty?
 
-    update_user(Autentication.current_user[:index], new_password, new_username)
+    update_user(Autentication.current_user[:index], new_password, new_username, new_rol)
 
     puts "\e[32m'user modified'\e[0m"
   end
 
-  def update_user(index, new_password, new_username)
-    @@users[index][:username] = new_username
-    @@users[index][:password] = new_password
-  end
-
   def self.remove_user
-    return puts "\e[31m you need to be loged \e[0m" unless Autentication.is_loged?
+    begin
+      Autentication.check_logged_in
+    rescue CustomExceptions::NotLoggedInError, CustomExceptions::NotAdminError => e
+      return puts e.message
+    end
 
     current_user = Autentication.current_user
 
@@ -49,10 +54,11 @@ class User
   end
 
   def self.remove_user_admin(username)
-    user_found = find_user_index(username)
-    return puts "\e[31m User not found \e[0m" unless user_found.key?(:index)
+    index = find_user_index(username)
 
-    @@users.delete_at(user_found[:index])
+    return puts "\e[31m User not found \e[0m" if index.nil?
+
+    @@users.delete_at(index)
     puts "\e[32m'done!'\e[0m"
   end
 
@@ -64,9 +70,9 @@ class User
     @@users = users unless users.empty?
   end
 
-  def find_user_index(username)
+  def self.find_user_index(username)
     @@users.each_with_index do |user, index|
-      return user_found[:index] = index if user[:username] == username
+      return index if user[:username] == username
     end
   end
 end
